@@ -1,4 +1,6 @@
 '''
+Kokia turėtų būti stačiakampio gretasienio formos dėžė, kad vienetiniam paviršiausplotui jos tūris būtų maksimalus?
+
 1. Suprogramuokite gradientinio nusileidimo, greičiausiojo nusileidimo ir deformuojamo simplekso algoritmus.
 2. Laikant kintamaisiais dėžės priekinės ir galinės sienų plotų sumą, šoninių sienų plotų sumą, viršutinės ir apatinės sienų plotų sumą, aprašykite vienetinio dėžės paviršiaus ploto reikalavimą ir dėžės tūrio pakelto kvadratu funkciją.
 3. Iš vienetinio paviršiaus ploto reikalavimo išveskite vieno iš kintamojo išraišką per kitus.
@@ -10,10 +12,10 @@
 9. Vizualizuokite tikslo funkciją ir bandymo taškus.
 '''
 from imports import datetime, math, np, sp, plt
-from objfunc import f
+from objfunc import f, gradF
 from gradDescent import gradDescent
 from steepDescent import steepDescent
 from simplex import simplex
 
 print(f"{datetime.now()}")
-print()
+
