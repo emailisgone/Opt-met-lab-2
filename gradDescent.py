@@ -1,0 +1,2 @@
+def gradDescent():
+    return None
