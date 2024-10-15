@@ -19,3 +19,4 @@ from simplex import simplex
 
 print(f"{datetime.now()}")
 
+print(f([1,1]))
