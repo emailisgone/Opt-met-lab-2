@@ -1,5 +1,3 @@
-from imports import np
-
 def f(x):
     x1, x2 = x
     return -1/8*(x1*x2-x1**2*x2-x1*x2**2)
