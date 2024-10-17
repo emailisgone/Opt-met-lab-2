@@ -12,11 +12,20 @@ Kokia turėtų būti stačiakampio gretasienio formos dėžė, kad vienetiniam p
 9. Vizualizuokite tikslo funkciją ir bandymo taškus.
 '''
 from imports import datetime, math, np, sp, plt
-from objfunc import f, gradF
+from objfunc import ObjectiveFunction
 from gradDescent import gradDescent
 from steepDescent import steepDescent
 from simplex import simplex
 
 print(f"{datetime.now()}")
 
-print(f([1,1]))
+obj = ObjectiveFunction()
+res1 = obj.gradF([0.5, 0.7])
+res2 = obj.f([0.3, 0.3])
+print(str(res1) + " " + str(res2))
+print(obj.counter)
+
+obj.reset()
+res3 = obj.f([0, 0])
+print(res3)
+print(obj.counter)
