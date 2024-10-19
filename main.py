@@ -17,6 +17,7 @@ from gradDescent import gradDescent
 from steepDescent import steepDescent
 from simplex import simplex
 from test import SimplexOptimizer
+from scipy.optimize import minimize
 
 print(f"{datetime.now()}")
 
@@ -49,7 +50,7 @@ print(c)
 print(obj.counter)
 obj.reset()
 print("----------------------[SIMPLEX]------------------------")
-a, b, c= simplex(obj, point, 2, 1.0, 0.5, 2.0, 0.5)
+'''a, b, c= simplex(obj, point, 2, 1.0, 0.5, 2.0, 0.5)
 #simpleksu = SimplexOptimizer(obj)
 #a,b,c=simpleksu.optimize(point)
 print(a)
@@ -57,3 +58,7 @@ print(b)
 print(c)
 print(obj.counter)
 obj.reset()
+'''
+
+'''x = minimize(obj.f, point, method='Nelder-Mead') -  the "true" simplex solution from the scipy lib
+print(x.x)'''
