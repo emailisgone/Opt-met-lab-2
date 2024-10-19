@@ -16,10 +16,11 @@ from objfunc import ObjectiveFunction
 from gradDescent import gradDescent
 from steepDescent import steepDescent
 from simplex import simplex
+from test import SimplexOptimizer
 
 print(f"{datetime.now()}")
 
-obj = ObjectiveFunction()
+'''obj = ObjectiveFunction()
 res1 = obj.gradF([0.5, 0.7])
 res2 = obj.f([0.3, 0.3])
 print(str(res1) + " " + str(res2))
@@ -28,4 +29,31 @@ print(obj.counter)
 obj.reset()
 res3 = obj.f([0, 0])
 print(res3)
+print(obj.counter)'''
+
+obj = ObjectiveFunction()
+point = [0.3, 0.3]
+
+a, b, c= gradDescent(obj, point, 1)
+print(a)
+print(b)
+print(c)
 print(obj.counter)
+
+obj.reset()
+print("----------------------[STEEP DESCENT]------------------------")
+a, b, c= steepDescent(obj, point)
+print(a)
+print(b)
+print(c)
+print(obj.counter)
+obj.reset()
+print("----------------------[SIMPLEX]------------------------")
+a, b, c= simplex(obj, point, 2, 1.0, 0.5, 2.0, 0.5)
+#simpleksu = SimplexOptimizer(obj)
+#a,b,c=simpleksu.optimize(point)
+print(a)
+print(b)
+print(c)
+print(obj.counter)
+obj.reset()
