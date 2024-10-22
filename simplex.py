@@ -1,56 +1,55 @@
 from objfunc import ObjectiveFunction
 
-def simplex(obj:ObjectiveFunction, x0, n, alpha, beta, gamma, nu, eps=1e-4, maxIter=1000):
-    def create_simplex(x0, alpha):
-        simplex = [x0]
-        for i in range(n):
-            point = x0.copy()
-            point[i] += alpha
-            simplex.append(point)
-        return simplex
-
-    def calculate_centroid(simplex, exclude_index):
-        centroid = [sum(point[i] for j, point in enumerate(simplex) if j != exclude_index) / n 
-                    for i in range(n)]
-        return centroid
-
-    simplex = create_simplex(x0, alpha)
+def simplex(obj:ObjectiveFunction, x0, init_step=0.025, step_coeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, sigma=0.5):
+    dim = len(x0)
+    pond = [x0]
+    f_values = [obj.f(x0)]
+    iter = 0
     
-    i = 0
-    for _ in range(maxIter):
-        i+=1
-        simplex.sort(key=lambda x: obj.f(x))
+    for i in range(dim):
+        x_temp = x0.copy()
+        if x_temp[i] == 0:
+            x_temp[i] = init_step
+        else:
+            x_temp[i] *= step_coeff
+        pond.append(x_temp)
+        f_values.append(obj.f(x_temp))
+    
+    while True:
+        iter += 1
+        #print(iter)
+        sorted_indices = sorted(range(len(f_values)), key=lambda i: f_values[i])
+        pond = [pond[i] for i in sorted_indices]
+        f_values = [f_values[i] for i in sorted_indices]
         
-        xl, xg, xh = simplex[0], simplex[-2], simplex[-1]
+        x_m = [sum([pond[i][j] for i in range(len(pond) - 1)]) / dim for j in range(dim)]
         
-        xc = calculate_centroid(simplex, -1)
+        x_r = [x_m[j] + alpha * (x_m[j] - pond[-1][j]) for j in range(dim)]
+        y_r = obj.f(x_r)
         
-        xr = [2 * xc[i] - xh[i] for i in range(n)]
-        f_xr = obj.f(xr)
-        
-        if obj.f(xl) <= f_xr < obj.f(xg):
-            simplex[-1] = xr
-            continue
-        
-        if f_xr < obj.f(xl):
-            xe = [gamma * xr[i] + (1 - gamma) * xc[i] for i in range(n)]
-            if obj.f(xe) < f_xr:
-                simplex[-1] = xe
+        if f_values[0] <= y_r < f_values[-2]:
+            pond[-1], f_values[-1] = x_r, y_r
+        elif y_r < f_values[0]:
+            x_e = [x_m[j] + gamma * (x_m[j] - pond[-1][j]) for j in range(dim)]
+            y_e = obj.f(x_e)
+            if y_e < y_r:
+                pond[-1], f_values[-1] = x_e, y_e
             else:
-                simplex[-1] = xr
-            continue
+                pond[-1], f_values[-1] = x_r, y_r
+        else:
+            x_c = [x_m[j] + rho * (pond[-1][j] - x_m[j]) for j in range(dim)]
+            y_c = obj.f(x_c)
+            if y_c < f_values[-1]:
+                pond[-1], f_values[-1] = x_c, y_c
+            else:
+                for i in range(1, len(pond)):
+                    pond[i] = [pond[0][j] + sigma * (pond[i][j] - pond[0][j]) for j in range(dim)]
+                    f_values[i] = obj.f(pond[i])
         
-        xk = [beta * xh[i] + (1 - beta) * xc[i] for i in range(n)]
-        if obj.f(xk) < obj.f(xh):
-            simplex[-1] = xk
-            continue
+        x_error = max([sum((pond[i][j] - pond[0][j]) ** 2 for j in range(dim)) ** 0.5 for i in range(1, len(pond))])
+        y_error = abs(f_values[0] - f_values[-1])
         
-        x1 = simplex[0]
-        for i in range(1, n + 1):
-            simplex[i] = [x1[j] + nu * (simplex[i][j] - x1[j]) for j in range(n)]
-        
-        if max(abs(obj.f(simplex[i]) - obj.f(simplex[0])) for i in range(1, n + 1)) < eps:
+        if x_error < eps and y_error < eps:
             break
     
-    best_point = min(simplex, key=obj.f)
-    return best_point, obj.f(best_point), i
+    return pond[0], f_values[0], iter

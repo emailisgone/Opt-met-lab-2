@@ -11,31 +11,19 @@ Kokia turėtų būti stačiakampio gretasienio formos dėžė, kad vienetiniam p
 8. Palyginkite rezultatus: gauti sprendiniai, rastas funkcijos minimumo įvertis, atliktų žingsnių ir funkcijų skaičiavimų skaičius priklausomai nuo pradinio taško.
 9. Vizualizuokite tikslo funkciją ir bandymo taškus.
 '''
-from imports import datetime, math, np, sp, plt
+from imports import datetime, math, np, sp, plt, scp
 from objfunc import ObjectiveFunction
-from gradDescent import gradDescent
+from gradDescent import gradDescent, gradTest
 from steepDescent import steepDescent
 from simplex import simplex
 from test import SimplexOptimizer
-from scipy.optimize import minimize
 
-print(f"{datetime.now()}")
-
-'''obj = ObjectiveFunction()
-res1 = obj.gradF([0.5, 0.7])
-res2 = obj.f([0.3, 0.3])
-print(str(res1) + " " + str(res2))
-print(obj.counter)
-
-obj.reset()
-res3 = obj.f([0, 0])
-print(res3)
-print(obj.counter)'''
+print(f"{datetime.now()}\n")
 
 obj = ObjectiveFunction()
-point = [0.3, 0.3]
+point = [0.5, 0.7]
 
-a, b, c= gradDescent(obj, point, 1)
+a, b, c = gradDescent(obj, point, 1)
 print(a)
 print(b)
 print(c)
@@ -43,22 +31,22 @@ print(obj.counter)
 
 obj.reset()
 print("----------------------[STEEP DESCENT]------------------------")
-a, b, c= steepDescent(obj, point)
+a, b, c = steepDescent(obj, point)
 print(a)
 print(b)
 print(c)
 print(obj.counter)
-obj.reset()
-print("----------------------[SIMPLEX]------------------------")
-'''a, b, c= simplex(obj, point, 2, 1.0, 0.5, 2.0, 0.5)
-#simpleksu = SimplexOptimizer(obj)
-#a,b,c=simpleksu.optimize(point)
-print(a)
-print(b)
-print(c)
-print(obj.counter)
-obj.reset()
-'''
 
-'''x = minimize(obj.f, point, method='Nelder-Mead') -  the "true" simplex solution from the scipy lib
-print(x.x)'''
+obj.reset()
+print("----------------------[SIMPLEX SciPy]------------------------")
+print(scp.optimize.minimize(obj.f, point, method='Nelder-Mead'))
+
+obj.reset()
+print("----------------------[SIMPLEX CUSTOM]------------------------")
+a, b, c = simplex(obj, point)
+print(a)
+print(b)
+print(c)
+print(obj.counter)
+
+obj.reset()

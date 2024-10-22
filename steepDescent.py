@@ -3,10 +3,10 @@ from imports import np
 from scipy.optimize import minimize_scalar
 
 def steepDescent(obj:ObjectiveFunction, x0, eps=1e-4, maxIter=1000):
-    i = 0
+    iter = 0
     x = x0.copy()
     
-    while i < maxIter:
+    while iter < maxIter:
         grad = obj.gradF(x)
         
         if sum(g**2 for g in grad)**0.5 < eps:
@@ -19,6 +19,6 @@ def steepDescent(obj:ObjectiveFunction, x0, eps=1e-4, maxIter=1000):
         gammaOpt = res.x
         
         x = [x[j]-gammaOpt*grad[j] for j in range(len(x))]
-        i += 1
+        iter += 1
     
-    return x, obj.f(x), i
+    return x, obj.f(x), iter
