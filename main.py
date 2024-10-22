@@ -21,9 +21,17 @@ from test import SimplexOptimizer
 print(f"{datetime.now()}\n")
 
 obj = ObjectiveFunction()
-point = [0.5, 0.7]
+point = [0.0, 0.0]
 
-a, b, c = gradDescent(obj, point, 1)
+a, b, c = gradDescent(obj, point, 0.3)
+print(a)
+print(b)
+print(c)
+print(obj.counter)
+
+obj.reset()
+
+a, b, c = gradTest(obj, point, 0.3)
 print(a)
 print(b)
 print(c)
