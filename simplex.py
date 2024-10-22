@@ -1,55 +1,64 @@
 from objfunc import ObjectiveFunction
 
-def simplex(obj:ObjectiveFunction, x0, init_step=0.025, step_coeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, sigma=0.5):
-    dim = len(x0)
+def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, sigma=0.5, maxIter=200):
+    n = len(x0)
     pond = [x0]
-    f_values = [obj.f(x0)]
+    fVals = [obj.f(x0)]
     iter = 0
     
-    for i in range(dim):
-        x_temp = x0.copy()
-        if x_temp[i] == 0:
-            x_temp[i] = init_step
+    # Creating the other initial points to make n+1 angled figure (triangle in this case)
+    for i in range(n):
+        xTemp = x0.copy()
+        if xTemp[i] == 0:
+            xTemp[i] = initStep
         else:
-            x_temp[i] *= step_coeff
-        pond.append(x_temp)
-        f_values.append(obj.f(x_temp))
+            xTemp[i] *= stepCoeff
+        pond.append(xTemp)
+        fVals.append(obj.f(xTemp))
     
-    while True:
+    # Main loop
+    while True and iter < maxIter:
         iter += 1
-        #print(iter)
-        sorted_indices = sorted(range(len(f_values)), key=lambda i: f_values[i])
-        pond = [pond[i] for i in sorted_indices]
-        f_values = [f_values[i] for i in sorted_indices]
+
+        # Sort in ascending order, where pond[0] - best value(f(pond[0] the smallest = closest to minimum)), pond[-1] - worst
+        sortedInd = sorted(range(len(fVals)), key=lambda i: fVals[i])
+        pond = [pond[i] for i in sortedInd]
+        fVals = [fVals[i] for i in sortedInd]
         
-        x_m = [sum([pond[i][j] for i in range(len(pond) - 1)]) / dim for j in range(dim)]
+        # Establishing centroid by averaging coordinates of other points
+        x_m = [sum([pond[i][j] for i in range(len(pond) - 1)]) / n for j in range(n)]
         
-        x_r = [x_m[j] + alpha * (x_m[j] - pond[-1][j]) for j in range(dim)]
+        # Creating a reflection of the worst point (highest f(pond[-1]) OR furthest from minimum point)
+        x_r = [x_m[j] + alpha * (x_m[j] - pond[-1][j]) for j in range(n)]
         y_r = obj.f(x_r)
         
-        if f_values[0] <= y_r < f_values[-2]:
-            pond[-1], f_values[-1] = x_r, y_r
-        elif y_r < f_values[0]:
-            x_e = [x_m[j] + gamma * (x_m[j] - pond[-1][j]) for j in range(dim)]
+        # If the reflected point’s function value < second-worst point BUT >= the best point, the worst point is -> reflected point
+        if fVals[0] <= y_r < fVals[-2]:
+            pond[-1], fVals[-1] = x_r, y_r
+        # If the reflected point > best point, an expansion point x_e is established
+        elif y_r < fVals[0]:
+            x_e = [x_m[j] + gamma * (x_m[j] - pond[-1][j]) for j in range(n)]
             y_e = obj.f(x_e)
             if y_e < y_r:
-                pond[-1], f_values[-1] = x_e, y_e
+                pond[-1], fVals[-1] = x_e, y_e
             else:
-                pond[-1], f_values[-1] = x_r, y_r
+                pond[-1], fVals[-1] = x_r, y_r
+        # If the reflected point < the second-worst point, a contraction point x_c is established. If the contraction improves the worst point, the worst point = contraction point. Otherwise, the entire simplex is shrunk toward the best point (pond[0]).
         else:
-            x_c = [x_m[j] + rho * (pond[-1][j] - x_m[j]) for j in range(dim)]
+            x_c = [x_m[j] + rho * (pond[-1][j] - x_m[j]) for j in range(n)]
             y_c = obj.f(x_c)
-            if y_c < f_values[-1]:
-                pond[-1], f_values[-1] = x_c, y_c
+            if y_c < fVals[-1]:
+                pond[-1], fVals[-1] = x_c, y_c
             else:
                 for i in range(1, len(pond)):
-                    pond[i] = [pond[0][j] + sigma * (pond[i][j] - pond[0][j]) for j in range(dim)]
-                    f_values[i] = obj.f(pond[i])
+                    pond[i] = [pond[0][j] + sigma * (pond[i][j] - pond[0][j]) for j in range(n)]
+                    fVals[i] = obj.f(pond[i])
         
-        x_error = max([sum((pond[i][j] - pond[0][j]) ** 2 for j in range(dim)) ** 0.5 for i in range(1, len(pond))])
-        y_error = abs(f_values[0] - f_values[-1])
+        # Precision check !!!!! Decided to handle both points separately here just INCASE
+        xErr = max([sum((pond[i][j] - pond[0][j]) ** 2 for j in range(n)) ** 0.5 for i in range(1, len(pond))])
+        yErr = abs(fVals[0] - fVals[-1])
         
-        if x_error < eps and y_error < eps:
+        if xErr < eps and yErr < eps:
             break
     
-    return pond[0], f_values[0], iter
+    return pond[0], fVals[0], iter
