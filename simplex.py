@@ -64,6 +64,7 @@ def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4
         
         # Precision check !!!!! Decided to handle both points separately here just INCASE
         xErr = max([sum((pond[i][j] - pond[0][j]) ** 2 for j in range(n)) ** 0.5 for i in range(1, len(pond))])
+        print(xErr)
         yErr = abs(fVals[0] - fVals[-1])
         
         if xErr < eps and yErr < eps:
