@@ -1,20 +1,28 @@
 from objfunc import ObjectiveFunction
 
 def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, sigma=0.5, maxIter=200):
+    # DEFAULTS: nitStep=0.025, stepCoeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, sigma=0.5, maxIter=200
     n = len(x0)
     pond = [x0]
     fVals = [obj.f(x0)]
     iter = 0
     
     # Creating the other initial points to make n+1 angled figure (triangle in this case)
-    for i in range(n):
-        xTemp = x0.copy()
-        if xTemp[i] == 0:
-            xTemp[i] = initStep
-        else:
-            xTemp[i] *= stepCoeff
-        pond.append(xTemp)
-        fVals.append(obj.f(xTemp))
+    if n == 2:
+        pond.append([x0[0] + initStep, x0[1]])
+        fVals.append(obj.f(pond[-1]))
+        
+        pond.append([x0[0] + initStep/2, x0[1] + initStep * 0.866]) 
+        fVals.append(obj.f(pond[-1]))
+    else:
+        for i in range(n):
+            xTemp = x0.copy()
+            if xTemp[i] == 0:
+                xTemp[i] = initStep
+            else:
+                xTemp[i] *= stepCoeff
+            pond.append(xTemp)
+            fVals.append(obj.f(xTemp))
     
     # Main loop
     while True and iter < maxIter:

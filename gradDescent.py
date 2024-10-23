@@ -1,7 +1,7 @@
 from imports import np
 from objfunc import ObjectiveFunction
 
-def gradDescent(obj:ObjectiveFunction, x0, gamma, eps=1e-4, maxIter=200):
+def gradDescent(obj:ObjectiveFunction, x0, gamma, eps=1e-4, maxIter=1000):
     iter = 0
     x = x0.copy()
     
