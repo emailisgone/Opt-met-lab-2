@@ -16,26 +16,26 @@ from objfunc import ObjectiveFunction
 from gradDescent import gradDescent
 from steepDescent import steepDescent
 from simplex import simplex
-from test import SimplexOptimizer
 
 print(f"{datetime.now()}\n")
 
 obj = ObjectiveFunction()
 point = [1,1]
+gamma = 0.3 # Gammas to analyze: 0.001, 0.003, 0.01, 0.03, 0.1, 0.3
 
-a, b, c = gradDescent(obj, point, 0.3) # Gammas to analyze: 0.001, 0.003, 0.01, 0.03, 0.1, 0.3
-print(a)
-print(b)
-print(c)
-print(obj.counter)
+a, b, c = gradDescent(obj, point, gamma) 
+print(f"Minimum point: {a}")
+print(f"Value @ min. point: {b}")
+print(f"nit: {c}")
+print(f"nfev: {obj.counter}")
 
 obj.reset()
 print("----------------------[STEEP DESCENT]------------------------")
 a, b, c = steepDescent(obj, point)
-print(a)
-print(b)
-print(c)
-print(obj.counter)
+print(f"Minimum point: {a}")
+print(f"Value @ min. point: {b}")
+print(f"nit: {c}")
+print(f"nfev: {obj.counter}")
 
 obj.reset()
 print("----------------------[SIMPLEX SciPy]------------------------")
@@ -44,9 +44,9 @@ print(scp.optimize.minimize(obj.f, point, method='Nelder-Mead'))
 obj.reset()
 print("----------------------[SIMPLEX CUSTOM]------------------------")
 a, b, c = simplex(obj, point)
-print(a)
-print(b)
-print(c)
-print(obj.counter)
+print(f"Minimum point: {a}")
+print(f"Value @ min. point: {b}")
+print(f"nit: {c}")
+print(f"nfev: {obj.counter}")
 
 obj.reset()
