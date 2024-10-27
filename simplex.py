@@ -57,10 +57,6 @@ def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4
             y_c = obj.f(x_c)
             if y_c < fVals[-1]:
                 pond[-1], fVals[-1] = x_c, y_c
-            else:
-                for i in range(1, len(pond)):
-                    pond[i] = [pond[0][j] + sigma * (pond[i][j] - pond[0][j]) for j in range(n)]
-                    fVals[i] = obj.f(pond[i])
         
         # Precision check !!!!! Decided to handle both points separately here just INCASE
         xErr = max([sum((pond[i][j] - pond[0][j]) ** 2 for j in range(n)) ** 0.5 for i in range(1, len(pond))])
