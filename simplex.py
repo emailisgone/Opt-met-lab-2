@@ -1,4 +1,5 @@
 from objfunc import ObjectiveFunction
+from imports import plt
 
 def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, sigma=0.5, maxIter=200):
     # DEFAULTS: nitStep=0.025, stepCoeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, sigma=0.5, maxIter=200
@@ -6,6 +7,8 @@ def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4
     pond = [x0]
     fVals = [obj.f(x0)]
     iter = 0
+
+    triangles = []
     
     # Creating the other initial points to make n+1 angled figure (triangle in this case)
     if n == 2:
@@ -23,6 +26,8 @@ def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4
                 xTemp[i] *= stepCoeff
             pond.append(xTemp)
             fVals.append(obj.f(xTemp))
+
+    triangles.append(pond.copy())
     
     # Main loop
     while True and iter < maxIter:
@@ -32,6 +37,8 @@ def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4
         sortedInd = sorted(range(len(fVals)), key=lambda i: fVals[i])
         pond = [pond[i] for i in sortedInd]
         fVals = [fVals[i] for i in sortedInd]
+
+        triangles.append(pond.copy())
         
         # Establishing centroid by averaging coordinates of other points
         x_m = [sum([pond[i][j] for i in range(len(pond) - 1)]) / n for j in range(n)]
@@ -60,10 +67,9 @@ def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4
         
         # Precision check !!!!! Decided to handle both points separately here just INCASE
         xErr = max([sum((pond[i][j] - pond[0][j]) ** 2 for j in range(n)) ** 0.5 for i in range(1, len(pond))])
-        print(xErr)
         yErr = abs(fVals[0] - fVals[-1])
         
         if xErr < eps and yErr < eps:
             break
     
-    return pond[0], fVals[0], iter
+    return pond[0], fVals[0], iter, triangles

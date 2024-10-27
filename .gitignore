@@ -1,5 +1,7 @@
 /__pycache__
 /.vscode
+/img
+/notes.txt
 /*.aux
 /*.fdb_latexmk
 /*.fls
