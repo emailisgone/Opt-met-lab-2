@@ -13,6 +13,7 @@
 \usepackage{listings}
 \usepackage{parskip}
 \usepackage{amssymb}
+\usepackage{derivative}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{url}
@@ -49,6 +50,72 @@
 
 \clearpage
 \section{Įvadas}
+Savo ankstesniame laboratoriniame darbe gilinausi į vienmatį optimizavimą. Kaip nustačiau, dauguma šių algoritmų remiasi tuo, kad naudotojas turi pasirinkti konkretų intervalą, kuriame bus ieškoma mažiausio taško. Tačiau šį kartą nagrinėsiu optimizavimą be apribojimų, kurio algoritmams, kaip galima spėti iš pavadinimo, nebūtinai reikia iš anksto nustatyto intervalo, nes jų leistinoji sritis sutampa su visa n-mate Euklido erdve $\mathbb{R}^n$ ir jiems veikti reikės kitokio kintamųjų rinkinio. Be to, šiame laboratoriniame darbe taip pat bandysiu optimizuoti konkrečią problemą, panašią į tas, kurios iš tikrųjų pasitaiko realiame pasaulyje.
+\section{Nagrinėjama problema}
+Prieš tęsdami nustatysime tikrąją problemą, kurią bandysiu optimizuoti. Štai kaip ji skamba:
 
+\textbf{Kokia turėtų būti stačiakampio gretasienio formos dėžė, kad vienetiniam paviršiaus plotui jos tūris būtų maksimalus?}
+
+Pirmiausia, atsižvelgiant į šio laboratorinio darbo temą, tikslo funkciją būtina aprašyti taip, kad pats optimizavimo uždavinys būtų sudarytas be apribojimų, t. y. $\min f(X)$. Kaip jau žinome, standartinė tūrio formulė yra tokia:
+\begin{equation*}
+    V = a\cdot b\cdot c,
+\end{equation*}
+kur $a, b$ ir $c$ yra mūsų stačiakampio gretasienio ilgis, plotis ir aukštis. Tačiau dėl paprastumo dirbsime su tūrio kvadratu, nes vėliau atlikdami pakeitimą gausime daugianarę išraišką, todėl bus daug lengviau rasti išvestines ir kritinius taškus. Apibrėžkime:
+\begin{itemize}
+    \item $x_{1} = 2ab$, priekinės ir galinės sienų plotų suma;
+    \item $x_{2} = 2bc$, šoninių sienų plotų suma;
+    \item $x_{3} = 2ac$, viršutinės ir apatinės sienų plotų suma;
+\end{itemize}
+
+Iš čia:
+\begin{itemize}
+    \item $ab = \frac{x_{1}}{2}$;
+    \item $bc = \frac{x_{2}}{2}$;
+    \item $ac = \frac{x_{3}}{2}$;
+\end{itemize}
+
+Kadangi mūsų užduotis yra maksimaliai padidinti dėžės tūrį, tenkantį vienam paviršiaus ploto vienetui, mūsų reikalavimas tampa $x_{1} + x_{2} + x_{3} = 1$. Čia galime išreikšti $x_{3} = 1 - x_{1} - x_{2}$.Taip pradinį optimizavimo uždavinį transformuojame į neapribotą optimizavimo uždavinį. Kadangi mus domina tik tūrio kvadratas, toliau atliekami tokie veiksmai:
+\begin{equation}\label{eq:1}
+    V^2 = (abc)^2 = aabbcc = \frac{x_{1}}{2}\cdot \frac{x_{2}}{2}\cdot \frac{x_{3}}{2} = \frac{1}{8}\cdot x_{1}x_{2}x_{3} = \frac{1}{8}\cdot x_{1}x_{2}\cdot (1-x_{1}-x_{2}) = \frac{1}{8}\cdot (x_{1}x_{2}-x_{1}^2x_{2}-x_{1}x_{2}^2)
+\end{equation}
+
+Kadangi mūsų tikslas yra optimizuoti uždavinį ieškant mažiausio taško, kuriame dėžės tūris yra didžiausias, turime padauginti \ref{eq:1} formulę iš -1, nes didžiausia V² vertė atitinka mažiausią -V². Štai tai ir gauname mūsų objektinę funkciją:
+\begin{equation}\label{eq:2}
+    f(x) = -\frac{1}{8}(x_{1}x_{2}-x_{1}^2x_{2}-x_{1}x_{2}^2)
+\end{equation}
+\subsection{Objektinė funkcija ir jos gradientas}
+Ankstesniame skyriuje nustatėme tokią optimizavimo uždavinio tikslo funkciją (\ref{eq:2}):
+\begin{equation*}
+    f(x) = -\frac{1}{8}(x_{1}x_{2}-x_{1}^2x_{2}-x_{1}x_{2}^2)
+\end{equation*}
+
+Dviem iš trijų algoritmų, kuriuos nagrinėsiu šiame laboratoriniame darbe, reikalingas vadinamasis tikslo funkcijos gradientas. \textbf{Gradientas} - vektorius, sudarytas iš funkcijos dalinių išvestinių,
+apskaičiuotų taške $x$.
+\begin{equation*}
+    \nabla f(x) = (\pdv{f(x)}{x_{1}},\dots,\pdv{f(x)}{x_{n}})
+\end{equation*}
+
+Mūsų tikslinei funkcijai tai gana paprasta: ją tereikia diferencijuoti pagal $x_{1}$ ir $x_{2}$ atskirai:
+\begin{equation*}
+    \pdv{f(x)}{x_{1}} = -\frac{1}{8}(x_{2}-2x_{1}x_{2}-x_{2}^2)
+\end{equation*}
+\begin{equation*}
+    \pdv{f(x)}{x_{2}} = -\frac{1}{8}(x_{1}-2x_{1}x_{2}-x_{1}^2)
+\end{equation*}
+
+Taigi, gavome savo tikslo funkcijos gradientą:
+\begin{equation}\label{eq:3}
+    \nabla f(x) = (-\frac{1}{8}(x_{2}-2x_{1}x_{2}-x_{2}^2), -\frac{1}{8}(x_{1}-2x_{1}x_{2}-x_{1}^2))
+\end{equation}
+\section{Optimizavimo be apribojimų metodai ir jų algoritmai}
+\subsection{Gradientinio nusileidimo metodas}
+\subsection{Greičiausio nusileidimo metodas}
+\subsection{Deformuojamo (Nelder-Mead) simplekso metodas}
+\section{Rezultatai ir jų palyginimai}
+\subsection{Minimumo taškas ir funkcijos reikšmė tame taške}
+\subsection{Greitis}
+\subsection{Efektyvumas}
+\section{Išvada}
+\section{Priedas}
 
 \end{document}
