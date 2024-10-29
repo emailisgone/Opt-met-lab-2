@@ -50,7 +50,7 @@
 
 \clearpage
 \section{Įvadas}
-Savo ankstesniame laboratoriniame darbe gilinausi į vienmatį optimizavimą. Kaip nustačiau, dauguma šių algoritmų remiasi tuo, kad naudotojas turi pasirinkti konkretų intervalą, kuriame bus ieškoma mažiausio taško. Tačiau šį kartą nagrinėsiu optimizavimą be apribojimų, kurio algoritmams, kaip galima spėti iš pavadinimo, nebūtinai reikia iš anksto nustatyto intervalo, nes jų leistinoji sritis sutampa su visa n-mate Euklido erdve $\mathbb{R}^n$ ir jiems veikti reikės kitokio kintamųjų rinkinio. Be to, šiame laboratoriniame darbe taip pat bandysiu optimizuoti konkrečią problemą, panašią į tas, kurios iš tikrųjų pasitaiko realiame pasaulyje.
+Savo ankstesniame laboratoriniame darbe gilinausi į vienmatį optimizavimą. Kaip nustačiau, dauguma šių algoritmų remiasi tuo, kad naudotojas turi pasirinkti konkretų intervalą, kuriame bus ieškoma minimumo taško. Tačiau šį kartą nagrinėsiu optimizavimą be apribojimų, kurio algoritmams, kaip galima spėti iš pavadinimo, nebūtinai reikia iš anksto nustatyto intervalo, nes jų leistinoji sritis sutampa su visa n-mate Euklido erdve $\mathbb{R}^n$ ir jiems veikti reikės kitokio kintamųjų rinkinio. Be to, šiame laboratoriniame darbe taip pat bandysiu optimizuoti konkrečią problemą, panašią į tas, kurios iš tikrųjų pasitaiko realiame pasaulyje.
 \section{Nagrinėjama problema}
 Prieš tęsdami nustatysime tikrąją problemą, kurią bandysiu optimizuoti. Štai kaip ji skamba:
 
@@ -79,7 +79,7 @@ Kadangi mūsų užduotis yra maksimaliai padidinti dėžės tūrį, tenkantį vi
     V^2 = (abc)^2 = aabbcc = \frac{x_{1}}{2}\cdot \frac{x_{2}}{2}\cdot \frac{x_{3}}{2} = \frac{1}{8}\cdot x_{1}x_{2}x_{3} = \frac{1}{8}\cdot x_{1}x_{2}\cdot (1-x_{1}-x_{2}) = \frac{1}{8}\cdot (x_{1}x_{2}-x_{1}^2x_{2}-x_{1}x_{2}^2)
 \end{equation}
 
-Kadangi mūsų tikslas yra optimizuoti uždavinį ieškant mažiausio taško, kuriame dėžės tūris yra didžiausias, turime padauginti \ref{eq:1} formulę iš -1, nes didžiausia V² vertė atitinka mažiausią -V². Štai tai ir gauname mūsų objektinę funkciją:
+Kadangi mūsų tikslas yra optimizuoti uždavinį ieškant minimumo taško, kuriame dėžės tūris yra didžiausias, turime padauginti \ref{eq:1} formulę iš -1, nes didžiausia V² vertė atitinka mažiausią -V². Štai tai ir gauname mūsų objektinę funkciją:
 \begin{equation}\label{eq:2}
     f(x) = -\frac{1}{8}(x_{1}x_{2}-x_{1}^2x_{2}-x_{1}x_{2}^2)
 \end{equation}
@@ -111,13 +111,33 @@ Taigi, gavome savo tikslo funkcijos gradientą:
 Savo patogumui sukūriau tikslo funkcijos ir jos gradiento Python klasę, nes ji leidžia man įdiegti vidinį skaitiklį, kuris leidžia daug tiksliau apskaičiuoti visą funkcijos iškvietimą, taip pat funkciją, kuri jį atstato. Taip man nebereikės gaišti laiko ieškant vietos kode, kur rankiniu būdu padidinti skaitiklį - tai buvo vienas iš mano pirmojo laboratorinio darbo aplaidumų.
 \inputpythonfile{objfunc.py}
 \section{Optimizavimo be apribojimų metodai ir jų algoritmai}
+Šiame skyriuje papasakosiu apie pačius metodus, kaip veikia jų algoritmai, ir pateiksiu savo asmeninę kiekvieno algoritmo interpretaciją.
 \subsection{Gradientinio nusileidimo metodas}
+Paprastai nusileidimo metodai pagrįsti informacija apie tikslo funkcijos $f(x)$ pirmąją ir antrąją dalines išvestines. Pats gradientas nukreiptas funkcijos greičiausio augimo kryptimi, todėl, norėdami rasti minimumo tašką abiem nusileidimo metodais, žengsime būtent antigradiento kryptimi. Tai ir yra esminė priežastis kodėl mūsų objektinės funkcijos (\ref{eq:2}) priekyje yra minuso ženklas.
+
+Panagrinėkime gradientinio nusileidimo metodą. Toliau pateikta formulė laikoma jo bei sekančio nusileidimo metodo esme:
+\begin{equation}\label{eq:4}
+    x_{i+1} = x_{i} - \gamma\nabla f(x_{i}),
+\end{equation}
+kur $x_{i}$ ir $x_{i+1}$ - atitinkamai vienos ir sekančios iteracijų bandomieji taškai, $\gamma$ - žingsnio daugiklis bei $\nabla f(x_{i})$ - objektinės funkcijos gradientas taške $x_{i}$. Pradėję nuo nurodyto pradinio taško $x_{0}$, taikydami pirmiau pateiktą formulę, mūsų $x_{i}$ iteracija po iteracijos artėja prie minimumo taško. Svarbu pažymėti, kad nors mūsų žingsnio daugiklis $\gamma$ tiesiogiai niekada nesikeičia, artėjimo greitis $(-\gamma\nabla f(x_{i}))$ nėra pastovus ir kiekvieną iteraciją tampa vis mažesnis dėl to, kad mažėja gradiento norma.
+
+Tyrinėdamas ir bandydamas parašyti Python gradiento nusileidimo algoritmo realizaciją, pastebėjau įdomų dalyką - dauguma tyrėjų mėgsta naudoti šiuos šešis žingsnio daugiklius $\gamma$: 0,001, 0,003, 0,01, 0,03, 0,1 ir 0,3. Pirmieji du man pasirodė gana maži, todėl konkrečiai šiam metodui nusprendžiau nustatyti ne 200, o 1000 iteracijų ribą, nes teoriškai net ir tokio kiekio gali nepakakti, kad su tam tikrais koeficientais būtų pasiektas minimumo taškas. Taigi, štai kaip atrodo mano gradientinio nusileidimo algoritmas:
+\inputpythonfile{gradDescent.py}
 \subsection{Greičiausio nusileidimo metodas}
-\subsection{Deformuojamo (Nelder-Mead) simplekso metodas}
-\section{Rezultatai ir jų palyginimai}
-\subsection{Minimumo taškas ir funkcijos reikšmė tame taške}
-\subsection{Greitis}
-\subsection{Efektyvumas}
+Apskritai stačiausio nusileidimo metodas yra labai panašus į gradiento nusileidimo - taip pat artėja prie minimumo taško iteruojant per formulę (\ref{eq:4}), tačiau šį kartą pats algoritmas, naudodamas išorinį, nustato optimaliausią žingsnio daliklį per iteraciją. Savo atveju nusprendžiau naudoti auksinio pjūvio algoritmą iš pirmojo laboratorinio darbo, nes man jį daug lengviau įgyvendinti. Tačiau galima teigti, kad taip elgdamasis atmetu neribotąją nusileidimo algoritmų savybę dėl to, kad auksinio pjūvio algoritmas reikalauja intervalo, tačiau tai netiesa, nes paieška tik padeda rasti efektyviausią žingsnio dydį nusileidimo kryptimi ir neriboja, kur greičiausio nusileidimo algoritmas gali eiti bendroje objektinės funkcijos erdvėje.
+
+Taigi, aukso pjūvio intervalai, kuriuos naudosiu, yra standartinis [0,1] ir tie, kuriuos radau bandymų būdu - [0,7] ir [0,20]. Intervalų pasirinkimą plačiau aptarsiu, kai pereisime prie algoritmo rezultatų. Štai Python įgyvendinimas:
+\inputpythonfile{steepDescent.py}
+\subsection{Deformuojamo simplekso metodas (Nelder-Mead)}
+Skirtingai nei ankstesni du metodai, Nelderio-Medo, arba kaip jis paprastai vadinamas deformuojamo simplekso, nesiremia tikslo funkcijos gradientu, o naudoja figūras, sudarytas iš taškų, kurie iteracijų metu palaipsniui artėja prie minimumo taško. Figūra priklauso nuo paieškos erdvės matmens, kuris nustatomas pagal tai, kiek kintamųjų bandome optimizuoti, tai yra $n$ - įvesto $x_{0}$ ilgio, ir griežtai vadovaujasi $n+1$ formule. Mūsų atveju tai bus trikampis. Taigi algoritmui nustačius pradinį trikampį, jo taškai išrikiuojami nuo geriausio, tai yra arčiausiai minimumo taško pagal tikslo funkcijos vertę, iki blogiausio. Tada sukuriamas dar vienas taškas, vadinamas centroidu - visų taškų, išskyrus blogiausią, centro taškas. Po to algoritmas atspindi blogiausią tašką per centrą, tarsi jį apverčia, ir tada jį išsaugo arba, jei tas naujas taškas yra arčiau minimumo, dar labiau išplečia. Tačiau jei atspindėtas taškas yra toliau nei antras blogiausias - jis perkeliamas arčiau centroido. Ir šie veiksmai su figūromis tęsiasi kiekvieną iteraciją, kol taškai pakankamai priartėja vienas prie kito ir atitinkamai prie minimumo taško arba algoritmas išnaudoja leistiną iteracijų skaičių.
+
+Taip atrodo mano deformuojamo simplekso įgyvendinimas Python kalba:
+\inputpythonfile{simplex.py}
+\section{Rezultatai ir jų analyzė}
+\subsection{Gradientinio nusileidimo metodo rezultatai ir vizualizacija}
+\subsection{Greičiausio nusileidimo metodo rezultatai ir vizualizacija}
+\subsection{Deformuojamo simplekso metodo rezultatai ir vizualizacija}
+\subsection{Trijų algoritmų palyginamoji analizė}
 \section{Išvada}
 \section{Priedas}
 

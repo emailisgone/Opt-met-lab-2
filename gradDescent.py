@@ -1,4 +1,4 @@
-from imports import np, plt
+from imports import np
 from objfunc import ObjectiveFunction
 
 def gradDescent(obj:ObjectiveFunction, x0, gamma, eps=1e-4, maxIter=1000):
