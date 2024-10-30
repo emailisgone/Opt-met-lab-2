@@ -30,7 +30,7 @@ print(f"Value @ min. point: {b}")
 print(f"nit: {c}")
 print(f"nfev: {obj.counter}")
 
-#graph(obj, point, points, 1)
+#graph(obj, point, points, 1, gamma)
 
 obj.reset()
 print("----------------------[STEEP DESCENT]------------------------")
@@ -40,7 +40,7 @@ print(f"Value @ min. point: {b}")
 print(f"nit: {c}")
 print(f"nfev: {obj.counter}")
 
-#graph(obj, point, points, 2)
+#graph(obj, point, points, 2, 0, [0,20])
 
 obj.reset()
 print("----------------------[SIMPLEX SciPy]------------------------")

@@ -1,17 +1,17 @@
 from imports import plt, np
 from objfunc import ObjectiveFunction
 
-def graph(obj:ObjectiveFunction, initialPoint, points, methodId):
+def graph(obj:ObjectiveFunction, initialPoint, points, methodId, gamma=0, interv=[0,1]):
     match methodId:
         case 1:
-            methodName = 'Gradientinio nusileidimo optimizacijos kelias'
+            methodName = f'Gradientinio nusileidimo optimizacijos kelias, x0 = {initialPoint}, γ = {gamma}'
         case 2:
-            methodName = 'Greičiausio nusileidimo optimizacijos kelias'
+            methodName = f'Greičiausio nusileidimo optimizacijos kelias, x0 = {initialPoint}, l, r = {interv[0]}, {interv[1]}'
         case 3:
-            methodName = 'Simplekso optimizacijos kelias'
+            methodName = f'Simplekso optimizacijos kelias, x0 = {initialPoint}'
 
-    x = np.linspace(-0.5, 1.5, 100)
-    y = np.linspace(-0.5, 1.5, 100)
+    x = np.linspace(-0.1, 1.1, 100)
+    y = np.linspace(-0.1, 1.1, 100)
     X, Y = np.meshgrid(x, y)
 
     Z = np.zeros_like(X)

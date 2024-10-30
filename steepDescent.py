@@ -16,7 +16,7 @@ def steepDescent(obj:ObjectiveFunction, x0, eps=1e-4, maxIter=200):
         def objective(gamma):
             return obj.f([x[j] - gamma * grad[j] for j in range(len(x))])
         
-        l, r = 0, 1     # Vėliau taip pat bus nagrinėjami l,r = 0,7 bei l,r = 0,20
+        l, r = 0, 1   # Vėliau taip pat bus nagrinėjami l,r = 0,7 bei l,r = 0,20
         tau = (math.sqrt(5)-1)/2
         L = r-l
         x1 = l+(1-tau)*L
