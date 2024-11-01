@@ -1,10 +1,10 @@
-from imports import plt, np
+'''from imports import plt, np
 from objfunc import ObjectiveFunction
 
 def graph(obj:ObjectiveFunction, initialPoint, points, methodId, gamma=0, interv=[0,1]):
     match methodId:
         case 1:
-            methodName = f'Gradientinio nusileidimo optimizacijos kelias, x0 = {initialPoint}, γ = {gamma}'
+            methodName = f'Gradientinio nusileidimo optimizacijos kelias, x0 = {initialPoint}, gamma = {gamma}'
         case 2:
             methodName = f'Greičiausio nusileidimo optimizacijos kelias, x0 = {initialPoint}, l, r = {interv[0]}, {interv[1]}'
         case 3:
@@ -21,7 +21,6 @@ def graph(obj:ObjectiveFunction, initialPoint, points, methodId, gamma=0, interv
 
     plt.figure(figsize=(10, 8))
     plt.contour(X, Y, Z, levels=20, cmap='viridis', alpha=0.6)
-    plt.colorbar(label='Objektinės funkcijos reikšmė')
     
     if methodId==1 or methodId==2:
         points = np.array(points)
@@ -40,15 +39,14 @@ def graph(obj:ObjectiveFunction, initialPoint, points, methodId, gamma=0, interv
                     'b-', alpha=alpha)
         
         final_triangle = np.array(points[-1])
-        plt.scatter(final_triangle[0,0], final_triangle[0,1], color='green', 
-                   marker='*', s=200, label='Minimumo taškas')
+        plt.scatter(final_triangle[0,0], final_triangle[0,1], color='green', marker='*', s=200, label='Minimumo taškas')
         
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title(f'{methodName}')
     plt.legend(loc=2)
     plt.grid(True, alpha=0.3)
-    plt.show()
+    plt.show()'''
 
         
     

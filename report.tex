@@ -1,11 +1,10 @@
 \documentclass{article}
-
+\usepackage{tabularray}
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage[english, lithuanian]{babel}
 \usepackage{float}
 \usepackage{amsmath}
 \usepackage{subcaption}
-\usepackage{tabularray}
 \usepackage{datetime}
 \usepackage{comment}
 \usepackage{caption}
@@ -128,7 +127,7 @@ kur $x_{i}$ ir $x_{i+1}$ - atitinkamai vienos ir sekančios iteracijų bandomiej
 Tyrinėdamas ir bandydamas parašyti Python gradiento nusileidimo algoritmo realizaciją, pastebėjau įdomų dalyką - dauguma tyrėjų mėgsta naudoti šiuos šešis žingsnio daugiklius $\gamma$: 0.001, 0.003, 0.01, 0.03, 0.1 ir 0.3. Pirmieji du man pasirodė gana maži, todėl konkrečiai šiam metodui nusprendžiau nustatyti ne 200, o 1000 iteracijų ribą, nes teoriškai net ir tokio kiekio gali nepakakti, kad su tam tikrais koeficientais būtų pasiektas minimumo taškas. Taigi, štai kaip atrodo mano gradientinio nusileidimo algoritmas:
 \inputpythonfile{gradDescent.py}
 \subsection{Greičiausio nusileidimo metodas}
-Apskritai stačiausio nusileidimo metodas yra labai panašus į gradiento nusileidimo - taip pat artėja prie minimumo taško iteruojant per formulę (\ref{eq:4}), tačiau šį kartą pats algoritmas, naudodamas išorinį, nustato optimaliausią žingsnio daliklį per iteraciją. Savo atveju nusprendžiau naudoti auksinio pjūvio algoritmą iš pirmojo laboratorinio darbo, nes man jį daug lengviau įgyvendinti. Tačiau galima teigti, kad taip elgdamasis atmetu neribotąją nusileidimo algoritmų savybę dėl to, kad auksinio pjūvio algoritmas reikalauja intervalo, tačiau tai netiesa, nes paieška tik padeda rasti efektyviausią žingsnio dydį nusileidimo kryptimi ir neriboja, kur greičiausio nusileidimo algoritmas gali eiti bendroje objektinės funkcijos erdvėje.
+Apskritai stačiausio nusileidimo metodas yra labai panašus į gradiento nusileidimo - taip pat artėja prie minimumo taško iteruojant per formulę (\ref{eq:4}), tačiau šį kartą pats algoritmas, naudodamas išorinį, nustato optimaliausią žingsnio daliklį per iteraciją. Realiai bet kuris vienmačio optimizavimo algoritmas turėtų tikti. Savo atveju nusprendžiau naudoti auksinio pjūvio algoritmą iš pirmojo laboratorinio darbo, nes man jį daug lengviau įgyvendinti. Tačiau galima teigti, kad taip elgdamasis atmetu neribotąją nusileidimo algoritmų savybę dėl to, kad auksinio pjūvio algoritmas reikalauja intervalo, tačiau tai netiesa, nes paieška tik padeda rasti efektyviausią žingsnio dydį nusileidimo kryptimi ir neriboja, kur greičiausio nusileidimo algoritmas gali eiti bendroje objektinės funkcijos erdvėje.
 
 Taigi, aukso pjūvio intervalai, kuriuos naudosiu, yra standartinis [0,1] ir tie, kuriuos radau bandymų būdu - [0,7] ir [0,20]. Intervalų pasirinkimą plačiau aptarsiu, kai pereisime prie algoritmo rezultatų. Štai Python įgyvendinimas:
 \inputpythonfile{steepDescent.py}
@@ -140,7 +139,7 @@ Taip atrodo mano deformuojamo simplekso įgyvendinimas Python kalba:
 \section{Rezultatai ir jų analyzė}
 Prieš pradedant rezultatų analizę, svarbu nustatyti kelias pagrindines sąvokas, kurias naudojau ir ankstesniame laboratoriniame darbe, taip pat pradinius taškus, kuriuos nagrinėsiu.
 
-Optimizavimo metodo algoritmo \textbf{greitis} - tai jo vidinių iteracijų kiekis, per kurį randamas tikslus minimumo taškas (arba intervalas, kuriame yra tas taškas ir kuris yra mažesnis už iš anksto nustatytą $\varepsilon$). Paprastai kuo mažiau iteracijų algoritmui reikia minėtam mažiausiam taškui pasiekti, tuo jis yra greitesnis. 
+Optimizavimo metodo algoritmo \textbf{greitis} - tai jo vidinių iteracijų kiekis, per kurį randamas tikslus minimumo taškas (arba intervalas, kuriame yra tas taškas ir kuris yra mažesnis už iš anksto nustatytą $\varepsilon$). Paprastai kuo mažiau iteracijų algoritmui reikia minėtam minimumo taškui pasiekti, tuo jis yra greitesnis. 
 
 Optimizavimo metodo algoritmo \textbf{efektyvumas} - tikslo funkcijos bei jos gradiento iškvietimų kiekis. Kuo mažiau kartų iškviečiame funkciją arba jos gradientą tam tikro taško reikšmei apskaičiuoti, tuo mažiau išteklių sunaudojame algoritmui vykdyti, vadinasi, tuo efektyviau naudoti tam tikrą metodą. 
 
@@ -148,92 +147,87 @@ Trys pradiniai taškai $x_{0}$, kuriuos įvesiu į algoritmus, yra šie: [0,0], 
 
 Dabar, kai pagrindinės sąvokos ir nuliniai taškai apibrėžti, pereikime prie analizės.
 \subsection{Gradientinio nusileidimo metodo rezultatai ir vizualizacija}
-Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ taip, kaip man atrodė tinkama. Ištyręs daugybę internetinių šaltinių, kuriuose nagrinėjamas gradientinis nusileidimas, nustačiau, kad populiariausi buvo šie šeši: 0.001, 0.003, 0.01, 0.03, 0.1 ir 0.3. Kaip jau minėjau, žiūrėdamas į šias $\gamma$ jau abejojau, kad kai kurios iš jų pasieks minimalų tašką, todėl šiam algoritmui nusprendžiau padidinti didžiausią iteracijų skaičių iki 1000, tačiau, kaip pamatysime, net ir to nepakako. 
+Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ taip, kaip man atrodė tinkama. Ištyręs daugybę internetinių šaltinių, kuriuose nagrinėjamas gradientinis nusileidimas, nustačiau, kad populiariausi buvo šie šeši: 0.001, 0.003, 0.01, 0.03, 0.1 ir 0.3. Kaip jau minėjau, žiūrėdamas į šias $\gamma$ jau abejojau, kad kai kurios iš jų pasieks minimumo tašką, todėl šiam algoritmui nusprendžiau padidinti didžiausią iteracijų skaičių iki 1000, tačiau, kaip pamatysime, net ir to nepakako. 
 \subsubsection{Minimumo taškas ir funkcijos reikšmė}
+Viską apskaičiavęs, gavau šiuos minimumo taškus ir funkcijų reikšmes, skirtas anksčiau minėtiems trims pradiniams taškams ir šešioms $\gamma$:
 \begin{table}[H]
     \centering
     \resizebox{\linewidth}{!}{%
-    \begin{tblr}{
-      cells = {c},
-      cell{1}{1} = {c=2,r=3}{0.092\linewidth},
-      cell{1}{3} = {c=6}{0.839\linewidth},
-      cell{2}{3} = {c=2}{0.219\linewidth},
-      cell{2}{5} = {c=2}{0.31\linewidth},
-      cell{2}{7} = {c=2}{0.31\linewidth},
-      cell{4}{1} = {r=6}{},
-      vlines,
-      hline{1,4,10} = {-}{},
-      hline{2-3} = {3-8}{},
-      hline{5-9} = {2-8}{},
-    }
+        \begin{tblr}{
+        cells = {c},
+        cell{1}{1} = {c=2,r=3}{0.092\linewidth},
+        cell{1}{3} = {c=6}{0.839\linewidth},
+        cell{2}{3} = {c=2}{0.219\linewidth},
+        cell{2}{5} = {c=2}{0.31\linewidth},
+        cell{2}{7} = {c=2}{0.31\linewidth},
+        cell{4}{1} = {r=6}{},
+        vlines,
+        hline{1,4,10} = {-}{},
+        hline{2-3} = {3-8}{},
+        hline{5-9} = {2-8}{},
+        }
                                                         &       & Nuliniai taškai $x_{0}$ &                &                        &                &                        &                \\
                                                         &       & {[}0,0]            &                & {[}1,1]                &                & {[}0.5;0.7]            &                \\
                                                         &       & Min. taškas        & Funkc. reikšmė & Min. taškas            & Funkc. reikšmė & Min. taškas            & Funkc. reikšmė \\
-    \begin{sideways}Žingsnio daugikliai $\gamma$\end{sideways} & 0.001 & 0                  & 0              & {[}0.809672, 0.809672] & 0.050753       & {[}0.447687, 0.651397] & 0.003611       \\
-                                                        & 0.01  & 0                  & 0              & {[}0.411849, 0.411849] & -0.003738      & {[}0.297361, 0.477088] & -0.003999      \\
-                                                        & 0.1   & 0                  & 0              & {[}0.333891, 0.333891] & -0.004629      & {[}0.330972, 0.335728] & -0.004629      \\
-                                                        & 0.003 & 0                  & 0              & {[}0.615093, 0.615093] & 0.010886       & {[}0.380095, 0.585160] & -0.000965      \\
-                                                        & 0.03  & 0                  & 0              & {[}0.338583, 0.338583] & -0.004626      & {[}0.296528, 0.383428] & -0.004548      \\
-                                                        & 0.3   & 0                  & 0              & {[}0.333881, 0.333881] & -0.004629      & {[}0.331648, 0.335034] & -0.004629      
+    \begin{sideways}Žingsnio daugikliai $\gamma$\end{sideways} & 0.001 & [0, 0]                  & 0              & {[}0.809672, 0.809672] & 0.050753       & {[}0.447687, 0.651397] & 0.003611       \\
+                                                        & 0.01  & [0, 0]                  & 0              & {[}0.411849, 0.411849] & -0.003738      & {[}0.297361, 0.477088] & -0.003999      \\
+                                                        & 0.1   & [0, 0]                  & 0             & {[}0.333891, 0.333891] & -0.004629      & {[}0.330972, 0.335728] & -0.004629      \\
+                                                        & 0.003 & [0, 0]                  & 0              & {[}0.615093, 0.615093] & 0.010886       & {[}0.380095, 0.585160] & -0.000965      \\
+                                                        & 0.03  & [0, 0]                  & 0              & {[}0.338583, 0.338583] & -0.004626      & {[}0.296528, 0.383428] & -0.004548      \\
+                                                        & 0.3   &  [0, 0]                 & 0              & {[}0.333881, 0.333881] & -0.004629      & {[}0.331648, 0.335034] & -0.004629      
     \end{tblr}
     }
+    \caption{Gradientinio nusileidimo metodo minimumo taškai ir funkcijos reikšmės visiems $\gamma$ ir $x_{0}$}
+    \label{table:1}
 \end{table}
+Kaip matome, taške [0,0] ir tikslo funkcija, ir jos gradientas yra nuliniai. Tai gana akivaizdu, nes šio taško gradiento norma visada bus lygi 0, t. y. mažesnė už numatytąją $\varepsilon$ reikšmę, todėl algoritmas net negali užbaigti pirmosios iteracijos ir yra priverstas grąžinti tašką [0,0]. Kalbant apie kitus taškus, atrodo, kad buvau teisus - kai kurios pateiktos $\gamma$ reikšmės iš tiesų yra per mažos, kad algoritmas galėtų pasiekti norimą minimumo tašką net po 1000 iteracijų. Tai atsispindi tiek [1,1], tiek [0,5;0,7] pradinių taškų rezultatuose: 0.001, 0.003, 0.01 ir 0.03 yra tiesiog per maži žingsnio daugikliai šiam konkrečiam metodui. Gali kilti akivaizdus klausimas: „Gerai, o kuriuos tada mums bus geriausia naudoti?“. Tačiau tai ir yra kito metodo esmė, o į patį klausimą bus atsakyta jo analizės metu. Kalbant apie kitas dvi $\gamma$: jų funkcijų reikšmės yra beveik identiškos, o minimumo taškai tik šiek tiek skiriasi. Tačiau skirtumas tarp jų yra nereikšmingas, todėl abu atsakymai laikomi teisingais.
+
+Taip atrodo rezultatų vizualizacija kontūriniuose grafikuose:
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc0_0.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc1_1g0_001.png}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc1_1g0_003.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc1_1g0_01.png}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc1_1g0_03.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc1_1g0_1.png}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc1_1g0_3.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc05_07g0_001.png}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc05_07g0_003.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc05_07g0_01.png}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc05_07g0_03.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc05_07g0_1.png}
         \includegraphics[width=0.72\textwidth]{img/gradDescent/graddesc05_07g0_3.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
+
+Kaip matyti iš grafikų, žingsnio daugikliai $\gamma$ daugiausia lemia taškų ir iteracijų, kurias algoritmas turi atlikti, kol pasiekia minimumo tašką, kiekį. Kuo storesnė linija, jungianti pradinį tašką su surastu minimumu, tuo daugiau tarpinių taškų algoritmas turėjo pereiti, taigi tuo daugiau ir iteracijų, ir funkcijos iškvietimų. Be to, kaip minėjau anksčiau, artėjimo greitis $(-\gamma\nabla f(x_{i}))$ niekada nebūna pastovus, ir tai matyti iš grafikų didesnėms $\gamma$ reikšmėms - 0.1 ir 0.3.
 \subsubsection{Greitis}
+Čia yra gradientinio nusileidimo metodo greičio lentelė:
 \begin{table}[H]
     \centering
     \begin{tblr}{
@@ -256,8 +250,12 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
                                                         & 0.03  & 0                  & 1000+         & 1000+         \\
                                                         & 0.3   & 0                  & 156           & 359           
     \end{tblr}
+    \caption{Gradientinio nusileidimo metodo algoritmo iteracijų skaičiai visiems $\gamma$ ir $x_{0}$}
+    \label{table:2}
 \end{table}
+Pirmas į akis krintantis momentas yra 0 iteracijų pradiniam taškui [0,0]. Galima manyti, kad nuliniam rezultatui apdoroti vis tiek turėtų prireikti bent 1 iteracijos, ir tai nebūtų klaida. Tačiau tai priklauso nuo algoritmo įgyvendinimo. Mano atveju 1 iteraciją laikau baigta, kai apskaičiuojamas kitas bandomasis taškas $x_{i}$, vadinasi, galime tęsti toliau. Tačiau šiuo atveju niekada negalėsime tęsti, nes gradiento norma taške [0,0] visada bus lygi 0, t. y. mažesnė už tikslumo reikšmę $\varepsilon$. Kalbant apie kitus taškus, rezultatai yra tikėtini: kaip jau minėjau, dauguma pasirinktų žingsnio daugiklių neduoda gero rezultato, kai neviršijama maksimali iteracijų riba. Net vienas iš didesnių, 0.1, nesugeba neviršyti pradinio taško [0.5,0.7] ribos.
 \subsubsection{Efektyvumas}
+Čia yra gradientinio nusileidimo metodo efektyvumo lentelė:
 \begin{table}[H]
     \centering
     \begin{tblr}{
@@ -273,15 +271,21 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
                                                         &       & Nuliniai taškai $x_{0}$ &                  &                  \\
                                                         &       & {[}0,0]            & {[}1,1]          & {[}0.5;0.7]      \\
                                                         &       & Funkc. iškv. sk.   & Funkc. iškv. sk. & Funkc. iškv. sk. \\
-    \begin{sideways}Žingsnio daugikliai $\gamma$\end{sideways} & 0.001 & 2                  & 1001+            & 1001+            \\
-                                                        & 0.01  & 2                  & 1001+            & 1001+            \\
-                                                        & 0.1   & 2                  & 477              & 1001+            \\
-                                                        & 0.003 & 2                  & 1001+            & 1001+            \\
-                                                        & 0.03  & 2                  & 1001+            & 1001+            \\
+    \begin{sideways}Žingsnio daugikliai $\gamma$\end{sideways} & 0.001 & 2                  & 1000+            & 1000+            \\
+                                                        & 0.01  & 2                  & 1000+            & 1000+            \\
+                                                        & 0.1   & 2                  & 477              & 1000+            \\
+                                                        & 0.003 & 2                  & 1000+            & 1000+            \\
+                                                        & 0.03  & 2                  & 1000+            & 1000+            \\
                                                         & 0.3   & 2                  & 158              & 361              
     \end{tblr}
+    \caption{Gradientinio nusileidimo metodo algoritmo funkcijų iškvietimų skaičiai visiems $\gamma$ ir $x_{0}$}
+    \label{table:3}
 \end{table}
+Metodo efektyvumo lentelė beveik lygiai atitinka greičio lentelę, o skirtumas tarp reikšmių yra 2. Taip yra dėl papildomo gradiento ir funkcijos reikšmės taške skaičiavimo. Pažvelgus į mano kodą nesunku pastebėti, kad gradientas apskaičiuojamas prieš padidinant iteracijų skaitiklį, jis visada yra priekyje vienetu. Funkcijos reikšmės apskaičiavimas paskutiniame taške padidina skirtumą tarp iteracijų ir funkcijos įvertinimų iki dviejų. Vadinasi, todėl kiekviename taške ir kiekviename žingsnio daugikliui $\gamma$ skirtumas tarp dviejų lentelių bus 2.
+
+Apibendrinant šio metodo rezultatus: populiariausiais laikyti žingsnio daugikliai galiausiai pasirodo esą nelabai veiksmingi mūsų tikslinei funkcijai. Galbūt yra būdas, kaip tokį $\gamma$ apskaičiuoti mūsų atvejui? Pereikime prie kito metodo - gradientinio nusileidimo.
 \subsection{Greičiausio nusileidimo metodo rezultatai ir vizualizacija}
+Kaip jau minėta, šis metodas veikia identiškai kaip ir ankstesnis, tik atliekamas papildomas žingsnis - auksinio pjūvio algoritmu apskaičiuojamas optimaliausias žingsnio daugiklis $\gamma$ duotam pradiniam taškui $x_{0}$. Dėl to jau dabar galime prognozuoti, kad funkcijos iškvietimų skaičius bus daug didesnis, palyginti su ankstesniuoju metodu. Kartu teoriškai, jei mums pavyks rasti optimalią $\gamma$, iteracijų skaičius taip pat turėtų būti minimalus. Pažiūrėkime, ar tai atspindės gauti rezultatai.
 \subsubsection{Minimumo taškas ir funkcijos reikšmė}
 \begin{table}[H]
     \centering
@@ -302,38 +306,35 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
                                                   &             & Auksinio pjūvio algoritmo intervalai             &                &                        &                &                        &                \\
                                                   &             & {[}0;1]                &                & {[}0;7]                &                & {[}0;20]               &                \\
                                                   &             & Min. taškas            & Funkc. reikšmė & Min. taškas            & Funkc. reikšmė & Min. taškas            & Funkc. reikšmė \\
-    \begin{sideways}Nuliniai taškai $x_{0}$\end{sideways} & {[}0,0]     & 0                      & 0              & 0                      & 0              & 0                      & 0              \\
+    \begin{sideways}Nuliniai taškai $x_{0}$\end{sideways} & {[}0,0]     & [0, 0]                      & 0              & [0, 0]                      & 0              & [0, 0]                      & 0              \\
                                                   & {[}1,1]     & {[}0.333860, 0.333860] & -0.004629      & {[}0.333330, 0.333330] & -0.004629      & -                      & -              \\
                                                   & {[}0.5,0.7] & {[}0.331707, 0.334974] & -0.004629      & {[}0.331957, 0.334717] & -0.004629      & {[}0.332230, 0.333935] & -0.004629      
     \end{tblr}
     }
+    \caption{Greičiausio nusileidimo metodo minimumo taškai ir funkcijos reikšmės visiems auksinio pjūvio algoritmo intervalams ir $x_{0}$}
+    \label{table:4}
 \end{table}
+Vėlgi, pradinio taško [0,0] rezultatas yra identiškas ankstesnio metodo rezultatui dėl tos pačios priežasties - to taško gradiento norma yra 0, todėl net nepasieksime nei optimalaus $\gamma$ skaičiavimo, nei kito bandymo taško. Tačiau rezultatai pradeda atrodyti įdomūs kitiems dviem pradiniams taškams. Šį kartą taip pat reikia atkreipti dėmesį į aukso pjūvio algoritmo intervalą, kitaip tariant, sritį, kurioje ieškome optimalaus žingsnio daugiklio. Pažvelkime į pradinio taško [1,1] rezultatus. Pirmiausia į akis krinta tai, kad nėra [0;20] aukso pjūvio intervalo rezultatų. Optimali $\gamma$ minėtam pradiniam taškui yra apytiksliai 2,666677. Kaip matyti, mano įgyvendintas šis metodas gerai veikia intervale [0;7]. Tačiau, kai bandau taikyti šį metodą intervalui [0;20], gaunama perpildymo klaida. Taip yra dėl to, kad kai gama tampa didesnė už optimalią, mūsų $x_{i+1}$ bandymo taškai iš (\ref{eq:4}) funkcijos tampa per dideli. Tačiau [0.5,0.7] taško atveju šis intervalas yra geras dėl to, kad gradientas ten nėra toks didelis kaip ankstesniame taške, todėl galima naudoti didesnį žingsnio daugiklį, kuris šiuo atveju yra 11,319706. Kalbant apie minimumo taškus ir funkcijos reikšmes, jos yra daugiau ar mažiau panašios, su nedideliais nukrypimais.
 
+Štai kaip atrodo šio metodo grafikai:
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/steepDescent/steepdesc0_0.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/steepDescent/steepdesc1_1interv0_1.png}
         \includegraphics[width=0.72\textwidth]{img/steepDescent/steepdesc1_1interv0_7.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/steepDescent/steepdesc05_07interv0_1.png}
         \includegraphics[width=0.72\textwidth]{img/steepDescent/steepdesc05_07interv0_20.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
-
-
+Kairėje pusėje esantys grafikai labai panašūs į gradientinio nusileidimo metodo grafikus. Tačiau kaip dėl dešiniųjų grafikų? Kodėl yra tiek mažai bandomųjų taškų? Į šiuos klausimus atsakysiu metodų greičio pastraipoje.
 \subsubsection{Greitis}
 \begin{table}[H]
     \centering
@@ -354,7 +355,10 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
                                                      & {[}1,1]     & 44            & 1             & -             \\
                                                      & {[}0.5,0.7] & 107           & 14            & 7             
     \end{tblr}
+    \caption{Greičiausio nusileidimo metodo algoritmo iteracijų skaičiai visiems auksinio pjūvio intervalams ir $x_{0}$}
+    \label{table:5}
 \end{table}
+Vėlgi, pradinio taško [0,0] rezultatai yra savaime suprantami. Kalbant apie taškus [1,1] ir [0.5,0.7], iteracijų skaičius, palyginti su ankstesniu metodu, jau yra gana mažas. Taip yra todėl, kad galimo optimalaus žingsnio daliklio bazinė sritis [0,1] jau leidžia aukso pjūviui parinkti daug didesnę $\gamma$, todėl sumažėja bendras iteracijų skaičius. Tačiau žvelgiant į kitus du intervalus [0;7] ir [0;20], kaip iteracijų skaičius gali būti toks mažas? Esmė tame, kad taikant greičiausią nusileidimą, kiekvienoje iteracijoje apskaičiuojame gradientą dabartiniame taške ir naudojame jį paieškos krypčiai nustatyti. Tada funkcija minimizuojama tik pagal šią liniją (neigiamo gradiento kryptį). Ši paieška pagal liniją supaprastina optimizavimo procesą, nes, užuot optimizavę sudėtingą daugiamatį paviršių, optimalaus žingsnio daliklio ieškome tik pagal vieną liniją. Štai kodėl gauname tokį mažą iteracijų skaičių intervalams, artimiems optimaliam $\gamma$.
 \subsubsection{Efektyvumas}
 \begin{table}[H]
     \centering
@@ -375,8 +379,12 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
                                                      & {[}1,1]     & 1014             & 29               & -                \\
                                                      & {[}0.5,0.7] & 2463             & 380              & 205              
     \end{tblr}
-    \end{table}
+    \caption{Greičiausio nusileidimo metodo algoritmo funkcijų iškvietimų skaičiai visiems auksinio pjūvio intervalams ir $x_{0}$}
+    \label{table:6}
+\end{table}
+Efektyvumas - pagrindinis greičiausio nusileidimo metodo trūkumas. Kadangi algoritmas atlieka papildomą vienmatį optimizavimą, kad surastų optimalią $\gamma$, atitinkamai išauga funkcijos iškvietimų skaičius. Iš esmės tai yra greičio ir efektyvumo kompromisas. Siekiant greitesnių rezultatų, t. y. per kuo mažiau iteracijų, metodas žymiai dažniau kviečia tikslo funkciją ir jos gradientą, todėl tampa mažiau efektyvus.
 \subsection{Deformuojamo simplekso (Nelder-Mead) metodo rezultatai ir vizualizacija}
+Skirtingai nei ankstesni du metodai, deformuojamas simpleksas veikia tik su figūromis ir visiškai nesiremia tikslo funkcijos gradientu. Tačiau ar jis gali prilygti jų tikslumui? Pažvelkime į rezultatus.
 \subsubsection{Minimumo taškas ir funkcijos reikšmė}
 \begin{table}[H]
     \centering
@@ -391,23 +399,24 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
     {[}0.5,0.7]        & {[}0.333368, 0.333323] & -0.004629       \\
     \hline
     \end{tabular}
+    \caption{Deformuojamo simplekso metodo algoritmo minimumo taškai ir funkcijos reikšmės visiems $x_{0}$}
+    \label{table:7}
 \end{table}
+Minimumo taškai ir funkcijos reikšmės yra gana panašūs, tik su labai nedideliais nuokrypiais. Apskritai nieko netikėto.
+
+Štaip kaip atrodo deformuojamo simplekso metodo grafikai:
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\textwidth]{img/simplex/simplex0_0.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
 \begin{figure}[H]
     \begin{adjustbox}{margin=0pt,center}
         \includegraphics[width=0.72\linewidth]{img/simplex/simplex1_1.png}%
         \includegraphics[width=0.72\linewidth]{img/simplex/simplex05_07.png}
     \end{adjustbox}
-    %\caption{Niutono metodo vizualizacija (\ref{eq:1}) tikslo funkcijai.}
-    %\label{fig:3}
 \end{figure}
-
+Matome, kad kiekvieną kartą algoritmas pradeda nuo lygiakraščio trikampio, daro atspindį nuo blogiausio taško, plečiasi ir traukiasi, kaip numatyta, kol priartėja prie minimumo taško.
 \subsubsection{Greitis}
 \begin{table}[H]
     \centering
@@ -422,7 +431,10 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
     {[}0.5,0.7]        & 35             \\
     \hline
     \end{tabular}
+    \caption{Deformuojamo simplekso metodo algoritmo iteracijų skaičiai visiems $x_{0}$}
+    \label{table:8}
 \end{table}
+Kaip matome, iteracijų skaičius taip pat yra gana tikėtinas, o tolimiausiam pradiniam taškui [1,1] pasiekti minimumo prireikė daugiausiai iteracijų - 51.
 \subsubsection{Efektyvumas}
 \begin{table}[H]
     \centering
@@ -437,12 +449,45 @@ Taikydamas šį metodą galėjau laisvai nustatyti žingsnio daugiklį $\gamma$ 
     {[}0.5,0.7]        & 70                \\
     \hline
     \end{tabular}
+    \caption{Deformuojamo simplekso metodo algoritmo funkcijų iškvietimų skaičiai visiems $x_{0}$}
+    \label{table:9}
 \end{table}
+Įdomu, kad kalbant apie efektyvumą, pradiniame taške [0,0] atliekama šiek tiek daugiau funkcijų iškvietimų nei [0.5,0.7], o kalbant apie greitį - atvirkščiai - [0.5,0.7] reikia mažiau iteracijų.
 \subsection{Trijų algoritmų palyginamoji analizė}
-\subsubsection{Minimumo taškas ir funkcijos reikšmė}
-\subsubsection{Greitis}
-\subsubsection{Efektyvumas}
+Visi trys optimizavimo be apribojimų metodai turi savų privalumų ir trūkumų. Nors gradiento nusileidimo metodą palyginti lengva įgyvendinti kodu, jį taikant reikia rankiniu būdu įvesti žingsnio daugiklį, o tai, kaip matėme, ne visada labai efektyvu. Kartais galima iš karto atspėti gerą reikšmę, gaunant solidų iteracijų ir funkcijų iškvietimų kiekį, neviršijantį 100, kitais atvejais atspėta $\gamma$ gali priversti algoritmą „peržengti“ minimumo tašką ir sukelti klaidą. Tai iš esmės verčia žmones žaisti spėjimo žaidimą su $\gamma$ kintamuoju, o tai gana nepatogu ir atima daug laiko. 
+
+Greičiausio nusileidimo metodas yra ankstesnio patobulinimas. Užuot spėliojus $\gamma$ reikšmę, algoritmas atlieka papildomą vienmatį optimizavimą, kad rastų optimalią $\gamma$ reikšmę, o tai dažniausiai duoda neįtikėtinai mažą iteracijų skaičių. Tačiau tas papildomas optimizavimas galiausiai gerokai padidina bendrą funkcijų iškvietimų skaičių, todėl šis metodas yra gana neefektyvus. Be to, jį šiek tiek sudėtingiau įgyvendinti ir vėliau analizuoti, priklausomai nuo vidinio vienmačio optimizavimo algoritmo, kuris mano atveju buvo auksinis pjūvis. Dėl to atsirado dar vienas kintamasis, į kurį turėjau atsižvelgti rašydamas ataskaitą, - auksinio pjūvio algoritmo intervalas. Tuo metu šį algoritmą pasirinkau todėl, kad dar turėjau šalia jo realizaciją, tačiau paaiškėjo, kad dirbti su juo gana sudėtinga, nes nors techniškai nereikėtų pateikti jokio intervalo kaip argumento, kaip jau matėme, rezultatai vis tiek nuo jo priklauso. Taigi bet kuris tyrėjas, bandantis įgyvendinti šį optimizavimo be apribojimų metodą, prieš rašydamas paties metodo realizaciją turėtų būtinai apgalvoti vidinį vienmatį optimizavimo algoritmą.
+
+Deformuojamo simplekso metodas, mano nuomone, yra geras tarpinis variantas tarp dviejų ankstesnių. Jis nepriklauso nuo gradiento, todėl tampa daug nuoseklesnis nepriklausomai nuo pačios tikslo funkcijos. Palyginti su ankstesniais dviem metodais, jis nereikalauja jokių spėlionių ir duoda palyginti greitus ir išteklius taupančius rezultatus. Vienintelis trūkumas, kurį radau, yra sudėtingumas bandant parašyti savo įgyvendinimą. Turėjau net priversti jį pradėti nuo lygiakraščio trikampio, kai jis veikia antrajame matmenyje, kitaip tariant, nuo taško su dviem kintamaisiais, o to programuotojams reikia vengti - bandyti kietai užkoduoti per daug dalykų.
 \section{Išvada}
+Apibendrinant, pagrindiniai šio laboratorinio darbo tikslai:
+
+\begin{itemize}
+    \item išanalizuoti šiuos tris optimizavimo be apribojimų metodus - gradientinio nusileidimo, stačiausio nusileidimo ir deformuoto simplekso: jų išvestus minimalius taškus, funkcijų reikšmes, iteracijų kiekį (greitį) ir funkcijų iškvietimų kiekį (efektyvumą); 
+    \item išspręsti optimizavimo uždavinį: \textbf{Kokia turėtų būti stačiakampio gretasienio formos dėžė, kad vienetiniam paviršiaus plotui jos tūris būtų maksimalus?}
+\end{itemize}
+
+Po išsamios analizės galima pateikti atsakymą: \textbf{dėžė turi būti kubas, kurio viena į kitą atgręžtų sienų plotų sumos, kurių yra 3, lygūs $\frac{1}{3}$ paviršiaus vieneto ploto, t.y $2ab = 2bc = 2ac = \frac{1}{3}$, kur a, b, c - atitinkamai ilgis, plotis ir aukštis}.
 \section{Priedas}
+\lstinline|imports.py| failas:
+\inputpythonfile{imports.py}
+
+\lstinline|objfunc.py| failas:
+\inputpythonfile{objfunc.py}
+
+\lstinline|plotfunc.py| failas (siek tiek turėjau pakeisti kad galėčiau įkelti):
+\inputpythonfile{plotfunc.py}
+
+\lstinline|gradDescent.py| failas:
+\inputpythonfile{gradDescent.py}
+
+\lstinline|steepDescent.py| failas:
+\inputpythonfile{steepDescent.py}
+
+\lstinline|simplex.py| failas:
+\inputpythonfile{simplex.py}
+
+\lstinline|main.py| failas:
+\inputpythonfile{main.py}
 
 \end{document}
