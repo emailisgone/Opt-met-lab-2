@@ -1,5 +1,8 @@
 from objfunc import ObjectiveFunction
 
+def f(x):
+    return -1/8*(x[0]*x[1]-x[0]**2*x[1]-x[0]*x[1]**2)
+
 def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4, alpha=1, gamma=2, rho=0.5, maxIter=200):
     n = len(x0)
     pond = [x0]
@@ -60,5 +63,9 @@ def simplex(obj:ObjectiveFunction, x0, initStep=0.025, stepCoeff=1.025, eps=1e-4
         
         if xErr < eps and yErr < eps:
             break
+
+        #print(it)
+        if (it-1)%5==0:
+            print(f"[{it-1}]: x = {pond[0]}, f(x) = {f(pond[0])}, func. calls = {obj.counter}")
     
     return pond[0], fVals[0], it, triangles

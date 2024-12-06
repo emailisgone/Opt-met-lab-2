@@ -8,7 +8,7 @@ from simplex import simplex
 print(f"{datetime.now()}\n")
 
 obj = ObjectiveFunction()
-point = [1,1]
+point = [0.5,0.7]
 gamma = 0.3 # Gammas to analyze: 0.001, 0.003, 0.01, 0.03, 0.1, 0.3
 
 a, b, c, points = gradDescent(obj, point, gamma)

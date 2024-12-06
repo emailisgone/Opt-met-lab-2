@@ -1,4 +1,4 @@
-'''from imports import plt, np
+from imports import plt, np
 from objfunc import ObjectiveFunction
 
 def graph(obj:ObjectiveFunction, initialPoint, points, methodId, gamma=0, interv=[0,1]):
@@ -46,8 +46,4 @@ def graph(obj:ObjectiveFunction, initialPoint, points, methodId, gamma=0, interv
     plt.title(f'{methodName}')
     plt.legend(loc=2)
     plt.grid(True, alpha=0.3)
-    plt.show()'''
-
-        
-    
-
+    plt.show()
